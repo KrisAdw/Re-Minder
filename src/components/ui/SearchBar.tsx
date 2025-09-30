@@ -24,9 +24,9 @@ const SearchBar = () => {
       // kalau query kosong → fallback ambil semua
       if (!query.trim()) {
         if (pathname === "/") {
-          data = await getNotesApi({ archived: false, page: 1, pageSize: 20 });
+          data = await getNotesApi({ archived: false });
         } else if (pathname === "/archive") {
-          data = await getNotesApi({ archived: true, page: 1, pageSize: 20 });
+          data = await getNotesApi({ archived: true});
         } else if (pathname === "/trash") {
           const res = await listTrashApi({ page: 1, pageSize: 20 });
           data = res.items;
