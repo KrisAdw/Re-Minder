@@ -60,7 +60,7 @@ const TrashNotesList = () => {
           key={note.id}
           className="p-3 rounded-lg border bg-background flex flex-col gap-3"
         >
-          <span className="font-medium truncate">
+          <span className="font-medium truncate mb-3">
             {note.title || "(Untitled note)"}
           </span>
           <span className="text-xs text-muted-foreground">
@@ -69,13 +69,13 @@ const TrashNotesList = () => {
           <div className="flex gap-2 justify-end">
             <button
               onClick={() => handleRestore(note.id)}
-              className="px-2 py-1 text-sm rounded-md bg-secondary hover:bg-primary hover:text-white"
+              className="cursor-pointer px-2 py-1 text-sm text-white rounded-sm bg-bluehov hover:bg-blue-500"
             >
               Restore
             </button>
             <button
               onClick={() => handleHardDelete(note.id)}
-              className="px-2 py-1 text-sm rounded-md bg-destructive text-white"
+              className="cursor-pointer px-2 py-1 text-sm rounded-sm bg-destructive text-white"
             >
               Delete Forever
             </button>

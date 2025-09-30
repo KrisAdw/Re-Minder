@@ -93,11 +93,11 @@
 /* ---------- Dark Mode ---------- */
 .dark {
   /* Base */
-  --background: hsl(220, 6%, 13%);
+  --background: hsl(0, 0%, 7%);
   --foreground: oklch(0.985 0 0);
 
   --primary: oklch(0.92 0.004 286.32);
-  --secondary: oklch(0.274 0.006 286.033);
+  --secondary: hsl(0, 0%, 14%);
 
   --graybg: hsl(191 0% 29.5%);
   --bluehov: hsl(217.2 91.2% 40%);

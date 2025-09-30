@@ -46,8 +46,6 @@ export const createNoteApi = async (payload: CreateNotePayload) => {
 // =============== GET NOTES (active + archived) ===============
 export const getNotesApi = async (params?: {
   archived?: boolean;
-  page?: number;
-  pageSize?: number;
   q?: string;
   tag?: string;
   pinned?: boolean;
@@ -59,6 +57,7 @@ export const getNotesApi = async (params?: {
     throw new Error(err.response?.data?.message || "Failed to get notes");
   }
 };
+
 
 // =============== UPDATE ===============
 export const updateNoteApi = async (id: string, payload: UpdateNotePayload) => {
@@ -100,3 +99,28 @@ export const hardDeleteNoteApi = async (id: string, options?: { hard?: boolean }
   const res = await api.delete(`/note/${id}`, { params: options });
   return res.data.data;
 };
+
+// Search
+// Active / Archived notes
+export const searchNotesApi = async (q: string, archived?: boolean) => {
+  const res = await api.get<{ items: NoteItem[]}>("/note", {
+    params: {
+      q,
+      archived,
+      page: 1,
+      pageSize: 20,
+    }
+  });
+  return res.data.items;
+}
+// Trash
+export const searchTrashApi = async (q: string) => {
+  const res = await api.get<{data: { items: NoteItem[]}}>("/trash", {
+    params: {
+      q,
+      page: 1,
+      pageSize: 20,
+    }
+  });
+  return res.data.data.items;
+}

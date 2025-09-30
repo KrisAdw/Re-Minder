@@ -25,16 +25,30 @@ type BaseNotesListProps = {
   setNotes: (notes: NoteItem[]) => void;
 };
 
-const BaseNotesList = ({
-  archived,
-  selector,
-  setNotes,
-}: BaseNotesListProps) => {
+const BaseNotesList = ({ archived, selector, setNotes }: BaseNotesListProps) => {
   const notes = selector();
   const { updateNote, removeNote } = useNoteStore();
 
   const [selectedNote, setSelectedNote] = useState<null | NoteItem>(null);
   const [tagInput, setTagInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // ================= FETCH =================
+  const fetchNotes = async () => {
+    try {
+      setLoading(true);
+      const data = await getNotesApi({ archived }); // ✅ fetch semua notes
+      setNotes(data);
+    } catch (err) {
+      console.error("❌ Failed to fetch notes", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotes();
+  }, [archived]);
 
   // ================= HANDLERS =================
   const saveNote = async (note: NoteItem) => {
@@ -69,12 +83,9 @@ const BaseNotesList = ({
       const updated = await updateNoteApi(id, { color });
       updateNote(updated);
 
-      // sync juga ke state modal biar nggak ke-overwrite saat close
       if (selectedNote?.id === id) {
         setSelectedNote({ ...selectedNote, color: updated.color });
       }
-
-      console.log("Color changed:", color);
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to change color");
     }
@@ -83,8 +94,8 @@ const BaseNotesList = ({
   const handleDelete = async (id: string) => {
     try {
       const res = await deleteNoteApi(id); // default soft delete
-      toast.success(res.message); // <-- pakai message dari backend
-      removeNote(id); // update store kalau mau langsung ilang dari list
+      toast.success(res.message);
+      removeNote(id);
       setSelectedNote(null);
     } catch {
       toast.error("Failed to delete note");
@@ -117,25 +128,10 @@ const BaseNotesList = ({
 
   const handleCloseModal = async () => {
     if (selectedNote) {
-      await saveNote(selectedNote); // save terakhir sebelum close
+      await saveNote(selectedNote);
     }
     setSelectedNote(null);
   };
-
-  // ================= EFFECTS =================
-
-  // Fetch notes when component mounts or archived flag changes
-  useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const data = await getNotesApi({ archived });
-        setNotes(data);
-      } catch (err) {
-        console.error("❌ Failed to fetch notes", err);
-      }
-    };
-    fetchNotes();
-  }, [archived, setNotes]);
 
   // Auto-save selected note with debounce
   useEffect(() => {
@@ -149,7 +145,7 @@ const BaseNotesList = ({
   }, [selectedNote]);
 
   // ================= RENDER =================
-  if (!notes.length)
+  if (!notes.length && !loading)
     return (
       <div className="flex items-center justify-center h-60">
         <NoNotes />
@@ -183,6 +179,8 @@ const BaseNotesList = ({
           </motion.div>
         ))}
       </Masonry>
+
+      {loading && <p className="text-center py-4">Loading...</p>}
 
       <Modal
         open={!!selectedNote}
