@@ -9,8 +9,7 @@ const NotesList = () => {
   return (
     <BaseNotesList
       archived={false}
-      selector={getActiveNotes}
-      onArchiveLabel="Archive"
+      selector={getActiveNotes}      
       setNotes={setNotes}
     />
   );
