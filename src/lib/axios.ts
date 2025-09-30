@@ -10,6 +10,9 @@ const baseURL =
 const api = axios.create({
   baseURL,
   withCredentials: true, // penting biar cookie refresh_token ikut
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // ✅ Inject access token di setiap request
